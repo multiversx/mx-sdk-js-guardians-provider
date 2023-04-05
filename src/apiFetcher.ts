@@ -25,7 +25,6 @@ class ApiFetcher {
   }
 
   public set requestTransformer(transformer: any) {
-    console.log("SETTING REQUEST TRANSFORMER!");
     this._requestTransformer = transformer;
   }
 }

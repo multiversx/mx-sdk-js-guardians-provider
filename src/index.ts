@@ -1,5 +1,3 @@
-import { AxiosRequestConfig } from "axios";
-import GuardianProviderFactory from "./guardianProviderFactory";
 export * from "./guardianProviderFactory";
 
 // const nativeAuthTokenGenerator = () => {
