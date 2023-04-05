@@ -5,6 +5,7 @@ class ApiFetcher {
   private _requestTransformer: (
     config?: AxiosRequestConfig
   ) => AxiosRequestConfig | null = () => null;
+  private axiosInstance = axios.create();
 
   constructor() {
     if (ApiFetcher._instance) {
@@ -21,7 +22,7 @@ class ApiFetcher {
 
   public async fetch(config: AxiosRequestConfig): Promise<any> {
     const transformedConfig = this._requestTransformer(config);
-    return axios(transformedConfig ?? config);
+    return this.axiosInstance(transformedConfig ?? config);
   }
 
   public set requestTransformer(transformer: any) {
