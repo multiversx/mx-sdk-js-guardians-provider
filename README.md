@@ -1,8 +1,8 @@
-# mx-sdk-js-opera-provider
+# mx-sdk-js-guardians-provider
 
-Signing provider for dApps: Opera Crypto Wallet. 
+Co-Signing provider for dApps: Guardians Provider. 
 
-Documentation is available on [docs.multiversx.com](https://docs.multiversx.com/sdk-and-tools/erdjs/erdjs-signing-providers/), while an integration example can be found [here](https://github.com/multiversx/mx-sdk-js-examples/tree/main/signing-providers).
+<!-- Documentation is available on [docs.multiversx.com](https://docs.multiversx.com/sdk-and-tools/erdjs/erdjs-signing-providers/), while an integration example can be found [here](https://github.com/multiversx/mx-sdk-js-examples/tree/main/signing-providers).
 
 Note that **we recommend using [dapp-core](https://github.com/multiversx/mx-sdk-dapp)** instead of integrating the signing provider on your own.
 
@@ -25,4 +25,4 @@ In order to compile the library, run the following:
 ```
 npm install
 npm run compile
-```
+``` -->
