@@ -2,8 +2,13 @@ import GenericGuardianProvider from "../genericGuardianProvider";
 import { IProviderSpecificHooks, ITransaction } from "../interface";
 import { Signature } from "../primitives";
 
+enum EndpointsEnum {
+  SignMultipleTransactions = "/guardian/sign-multiple-transactions",
+}
+
 class TCSGuardianProvider extends GenericGuardianProvider {
   private getNativeAuthToken: () => string;
+  override _codeInputLength = 6;
 
   constructor({
     getNativeAuthToken,
@@ -29,7 +34,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         await this.fetcher.fetch({
           method: "post",
           baseURL: this.guardianServiceApiUrl,
-          url: `/guardian/sign-multiple-transactions`,
+          url: EndpointsEnum.SignMultipleTransactions,
           data: { code, transactions: txToSend },
           headers: {
             Authorization: `Bearer ${nativeAuthToken}`,

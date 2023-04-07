@@ -10,6 +10,8 @@ class GenericGuardianProvider {
   protected _guardianServiceApiUrl = "";
   protected _activeGuardianServiceUid = "";
   protected fetcher = ApiFetcher.getInstance();
+  protected _codeInputLength = 0;
+  protected _maxCodeInputLenght = 6;
 
   public async applyGuardianSignature<T extends ITransaction>(
     _transactions: T[],
@@ -72,6 +74,15 @@ class GenericGuardianProvider {
 
   public get activeGuardianServiceUid(): string {
     return this.activeGuardianServiceUid;
+  }
+
+  public get codeInputLength(): number {
+    if (!this._codeInputLength) {
+      throw new Error("Code input length not set in provider.");
+    }
+    return this._codeInputLength > this._maxCodeInputLenght
+      ? this._maxCodeInputLenght
+      : this._codeInputLength;
   }
 }
 
