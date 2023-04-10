@@ -6,6 +6,11 @@ export interface ITransaction {
   toPlainObject(): any;
   fromPlainObject(): any;
   applyGuardianSignature(signature: ISignature): void;
+  guardian: IAddress;
+}
+
+export interface IAddress {
+  bech32(): string;
 }
 
 export interface IAPIAccountResponse {

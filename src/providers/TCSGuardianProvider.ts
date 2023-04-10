@@ -1,6 +1,6 @@
 import GenericGuardianProvider from "../genericGuardianProvider";
 import { IProviderSpecificHooks, ITransaction } from "../interface";
-import { Signature } from "../primitives";
+import { Address, Signature } from "../primitives";
 
 enum EndpointsEnum {
   SignMultipleTransactions = "/guardian/sign-multiple-transactions",
@@ -49,6 +49,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         transaction.applyGuardianSignature(
           new Signature(plainCoSignedTransaction.guardianSignature)
         );
+        transaction.guardian = new Address(this._guardianAddress);
       }
 
       return transactions;
