@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from "axios";
 import ApiFetcher from "./apiFetcher";
 import GenericGuardianProvider from "./genericGuardianProvider";
-import { IInitData, IProviderSpecificHooks } from "./interface";
+import { IInitData } from "./interface";
 import ProvidersResolver from "./providersResolver";
 
 class GuardianProviderFactory {
@@ -16,8 +16,7 @@ class GuardianProviderFactory {
 
   static async createProvider(
     address: string,
-    apiAddress: string,
-    providerSpecificHooks: IProviderSpecificHooks
+    apiAddress: string
   ): Promise<GenericGuardianProvider> {
     const guardianInitData =
       await GuardianProviderFactory.getAccountGuardianInitData(
@@ -36,7 +35,7 @@ class GuardianProviderFactory {
         `"${guardianInitData.activeGuardianServiceUid}" service provider could not be resolved.`
       );
 
-    const provider = new providerData.provider(providerSpecificHooks);
+    const provider = new providerData.provider();
     provider.init({
       ...guardianInitData,
       providerServiceUrl: providerData.providerServiceUrl,

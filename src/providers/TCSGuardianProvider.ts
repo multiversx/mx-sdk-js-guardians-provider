@@ -1,5 +1,5 @@
 import GenericGuardianProvider from "../genericGuardianProvider";
-import { IProviderSpecificHooks, ITransaction } from "../interface";
+import { ITransaction } from "../interface";
 import { Address, Signature } from "../primitives";
 
 enum EndpointsEnum {
@@ -7,14 +7,10 @@ enum EndpointsEnum {
 }
 
 class TCSGuardianProvider extends GenericGuardianProvider {
-  private getNativeAuthToken: () => string;
   override _codeInputLength = 6;
 
-  constructor({
-    getNativeAuthToken,
-  }: Pick<IProviderSpecificHooks, "getNativeAuthToken">) {
+  constructor() {
     super();
-    this.getNativeAuthToken = getNativeAuthToken;
   }
 
   override async applyGuardianSignature<T extends ITransaction>(
@@ -27,8 +23,6 @@ class TCSGuardianProvider extends GenericGuardianProvider {
       return plainTx;
     });
 
-    const nativeAuthToken = this.getNativeAuthToken();
-
     try {
       const rawCosignedTransactions = (
         await this.fetcher.fetch({
@@ -36,9 +30,6 @@ class TCSGuardianProvider extends GenericGuardianProvider {
           baseURL: this.guardianServiceApiUrl,
           url: EndpointsEnum.SignMultipleTransactions,
           data: { code, transactions: txToSend },
-          headers: {
-            Authorization: `Bearer ${nativeAuthToken}`,
-          },
         })
       ).data.data.transactions;
 

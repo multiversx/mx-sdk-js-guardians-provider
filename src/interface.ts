@@ -40,7 +40,3 @@ export interface IInitData {
   pendingGuardianActivationEpoch: number;
   pendingGuardianAddress: string;
 }
-
-export interface IProviderSpecificHooks {
-  getNativeAuthToken: () => string;
-}
