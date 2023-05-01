@@ -7,6 +7,16 @@ import ProvidersResolver from "./providersResolver";
 class GuardianProviderFactory {
   private static fetcher = ApiFetcher.getInstance();
   private static _instance: GenericGuardianProvider | null;
+  private static _apiAddress = "";
+  private static _address = "";
+
+  public static get apiAddress(): string {
+    return this._apiAddress;
+  }
+
+  public static get address(): string {
+    return this._address;
+  }
 
   constructor() {
     throw new Error(
@@ -18,6 +28,8 @@ class GuardianProviderFactory {
     address: string,
     apiAddress: string
   ): Promise<GenericGuardianProvider> {
+    this._apiAddress = apiAddress;
+    this._address = address;
     const guardianInitData =
       await GuardianProviderFactory.getAccountGuardianInitData(
         address,
@@ -25,11 +37,9 @@ class GuardianProviderFactory {
       );
 
     const providerData = ProvidersResolver.getProviderByServiceId(
-      guardianInitData.activeGuardianServiceUid
+      guardianInitData.activeGuardianServiceUid ?? "ServiceID" // TODO: if the account is not guarded, let the user choose the guardian provider
     );
 
-    if (!guardianInitData.activeGuardianServiceUid)
-      throw new Error("The API did not return ant guardian service ID.");
     if (!providerData)
       throw new Error(
         `"${guardianInitData.activeGuardianServiceUid}" service provider could not be resolved.`

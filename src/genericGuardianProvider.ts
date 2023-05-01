@@ -1,5 +1,8 @@
+import { Transaction } from "@multiversx/sdk-core/out";
 import ApiFetcher from "./apiFetcher";
-import { IInitData, ITransaction } from "./interface";
+import GuardianProviderFactory from "./guardianProviderFactory";
+import { IInitData } from "./interface";
+import ProvidersResolver from "./providersResolver";
 
 class GenericGuardianProvider {
   protected _isAccountGuarded = false;
@@ -13,10 +16,24 @@ class GenericGuardianProvider {
   protected _codeInputLength = 0;
   protected _maxCodeInputLenght = 6;
 
-  public async applyGuardianSignature<T extends ITransaction>(
-    _transactions: T[],
+  public async applyGuardianSignature(
+    _transactions: Transaction[],
     _code: string
-  ): Promise<T[]> {
+  ): Promise<Transaction[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  public async registerGuardian(): Promise<{
+    qr: string;
+    guardianAddress: string;
+  }> {
+    throw new Error("Method not implemented.");
+  }
+
+  public async verifyCode(_params: {
+    code: string;
+    guardian: string;
+  }): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
 
@@ -44,7 +61,41 @@ class GenericGuardianProvider {
   }
 
   public async reinitialize(): Promise<boolean> {
-    // return await this.init();
+    if (!this.initialized) {
+      throw new Error("Guardian provider is not initialized.");
+    }
+    const {
+      activeGuardianServiceUid,
+      isGuarded,
+      activeGuardianAddress,
+      pendingGuardianActivationEpoch,
+      pendingGuardianAddress,
+    } = (
+      await this.fetcher.fetch({
+        method: "get",
+        baseURL: GuardianProviderFactory.apiAddress,
+        url: `/accounts/${GuardianProviderFactory.address}/?withGuardianInfo=true`,
+      })
+    ).data;
+
+    const providerData = ProvidersResolver.getProviderByServiceId(
+      activeGuardianServiceUid ?? "ServiceID" // TODO: if the account is not guarded, let the user choose the guardian provider
+    );
+
+    if (!providerData) {
+      throw new Error(
+        `"${activeGuardianServiceUid}" service provider could not be resolved.`
+      );
+    }
+
+    this.init({
+      activeGuardianServiceUid,
+      isGuarded,
+      activeGuardianAddress,
+      pendingGuardianActivationEpoch,
+      pendingGuardianAddress,
+      providerServiceUrl: providerData.providerServiceUrl,
+    });
     return true;
   }
 

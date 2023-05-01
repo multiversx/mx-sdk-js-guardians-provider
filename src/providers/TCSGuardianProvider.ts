@@ -1,5 +1,5 @@
+import { Transaction } from "@multiversx/sdk-core/out";
 import GenericGuardianProvider from "../genericGuardianProvider";
-import { ITransaction } from "../interface";
 import { Address, Signature } from "../primitives";
 
 enum EndpointsEnum {
@@ -13,14 +13,19 @@ class TCSGuardianProvider extends GenericGuardianProvider {
     super();
   }
 
-  override async applyGuardianSignature<T extends ITransaction>(
-    transactions: T[],
+  override async applyGuardianSignature(
+    transactions: Transaction[],
     code: string
-  ): Promise<T[]> {
+  ): Promise<Transaction[]> {
     const txToSend = transactions.map((tx) => {
       const plainTx = tx.toPlainObject();
       plainTx.guardian = this._guardianAddress;
-      return plainTx;
+      return {
+        ...plainTx,
+        nonce: Number(plainTx.nonce),
+        gasPrice: Number(plainTx.gasPrice),
+        gasLimit: Number(plainTx.gasLimit),
+      };
     });
 
     try {
@@ -40,11 +45,56 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         transaction.applyGuardianSignature(
           new Signature(plainCoSignedTransaction.guardianSignature)
         );
-        transaction.guardian = new Address(this._guardianAddress);
+        transaction.setGuardian(new Address(this._guardianAddress));
       }
 
       return transactions;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  override async registerGuardian(): Promise<{
+    qr: string;
+    guardianAddress: string;
+  }> {
+    try {
+      const {
+        data: {
+          data: { qr, ["guardian-address"]: guardianAddress },
+        },
+      } = await this.fetcher.fetch({
+        baseURL: this.guardianServiceApiUrl,
+        url: "/guardian/register",
+        method: "POST",
+        data: { tag: "" },
+      });
+      return { qr, guardianAddress };
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  override async verifyCode({
+    code,
+    guardian,
+  }: {
+    code: string;
+    guardian: string;
+  }): Promise<boolean> {
+    try {
+      console.log("verify init");
+      const response = await this.fetcher.fetch({
+        baseURL: this.guardianServiceApiUrl,
+        url: "/guardian/verify-code",
+        method: "POST",
+        data: { code, guardian },
+      });
+
+      console.log("resp is", response);
+      return true;
+    } catch (error: any) {
+      console.log(error);
       throw error;
     }
   }

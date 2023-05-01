@@ -5,7 +5,7 @@ class ProvidersResolver {
     {
       serviceId: "ServiceID",
       provider: TCSGuardianProvider,
-      providerServiceUrl: "https://mx-mfa-auth.elrond.ro",
+      providerServiceUrl: "https://testnet-tcs-api.multiversx.com",
     },
   ];
   static getProviderByServiceId(serviceId: string) {
