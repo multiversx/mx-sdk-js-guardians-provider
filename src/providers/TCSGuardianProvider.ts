@@ -83,15 +83,12 @@ class TCSGuardianProvider extends GenericGuardianProvider {
     guardian: string;
   }): Promise<boolean> {
     try {
-      console.log("verify init");
       const response = await this.fetcher.fetch({
         baseURL: this.guardianServiceApiUrl,
         url: "/guardian/verify-code",
         method: "POST",
         data: { code, guardian },
       });
-
-      console.log("resp is", response);
       return true;
     } catch (error: any) {
       console.log(error);

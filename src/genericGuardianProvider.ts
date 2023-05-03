@@ -94,7 +94,8 @@ class GenericGuardianProvider {
       activeGuardianAddress,
       pendingGuardianActivationEpoch,
       pendingGuardianAddress,
-      providerServiceUrl: providerData.providerServiceUrl,
+      providerServiceUrl:
+        providerData.providerServiceUrl[GuardianProviderFactory.networkId],
     });
     return true;
   }

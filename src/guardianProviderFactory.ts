@@ -4,11 +4,14 @@ import GenericGuardianProvider from "./genericGuardianProvider";
 import { IInitData } from "./interface";
 import ProvidersResolver from "./providersResolver";
 
+const DEFAULT_NETWORK_ID = "mainnet";
+
 class GuardianProviderFactory {
   private static fetcher = ApiFetcher.getInstance();
   private static _instance: GenericGuardianProvider | null;
   private static _apiAddress = "";
   private static _address = "";
+  private static _networkId = "";
 
   public static get apiAddress(): string {
     return this._apiAddress;
@@ -16,6 +19,10 @@ class GuardianProviderFactory {
 
   public static get address(): string {
     return this._address;
+  }
+
+  public static get networkId(): string {
+    return this._networkId;
   }
 
   constructor() {
@@ -26,10 +33,12 @@ class GuardianProviderFactory {
 
   static async createProvider(
     address: string,
-    apiAddress: string
+    apiAddress: string,
+    networkId?: string
   ): Promise<GenericGuardianProvider> {
     this._apiAddress = apiAddress;
     this._address = address;
+    this._networkId = networkId ?? DEFAULT_NETWORK_ID;
     const guardianInitData =
       await GuardianProviderFactory.getAccountGuardianInitData(
         address,
@@ -48,7 +57,7 @@ class GuardianProviderFactory {
     const provider = new providerData.provider();
     provider.init({
       ...guardianInitData,
-      providerServiceUrl: providerData.providerServiceUrl,
+      providerServiceUrl: providerData.providerServiceUrl[this._networkId],
     });
 
     return provider;

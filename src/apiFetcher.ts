@@ -21,7 +21,6 @@ class ApiFetcher {
   }
 
   public async fetch(config: AxiosRequestConfig): Promise<any> {
-    console.log("herererere");
     const transformedConfig =
       this._requestTransformer !== null
         ? this._requestTransformer(config)
