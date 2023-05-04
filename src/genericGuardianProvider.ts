@@ -1,8 +1,6 @@
 import { Transaction } from "@multiversx/sdk-core/out";
 import ApiFetcher from "./apiFetcher";
-import GuardianProviderFactory from "./guardianProviderFactory";
 import { IInitData } from "./interface";
-import ProvidersResolver from "./providersResolver";
 
 class GenericGuardianProvider {
   protected _isAccountGuarded = false;
@@ -15,6 +13,9 @@ class GenericGuardianProvider {
   protected fetcher = ApiFetcher.getInstance();
   protected _codeInputLength = 0;
   protected _maxCodeInputLenght = 6;
+  protected _address = "";
+  protected _networkId = "";
+  protected _apiAddress = "";
 
   public async applyGuardianSignature(
     _transactions: Transaction[],
@@ -44,6 +45,9 @@ class GenericGuardianProvider {
     pendingGuardianActivationEpoch,
     pendingGuardianAddress,
     providerServiceUrl,
+    address,
+    apiAddress,
+    networkId,
   }: IInitData & { providerServiceUrl: string }): Promise<boolean> {
     try {
       this._guardianServiceApiUrl = providerServiceUrl;
@@ -53,6 +57,9 @@ class GenericGuardianProvider {
       this._pendingGuardianActivationEpoch =
         pendingGuardianActivationEpoch ?? 0;
       this._activeGuardianServiceUid = activeGuardianServiceUid ?? "";
+      this._address = address;
+      this._apiAddress = apiAddress;
+      this._networkId = networkId;
       this._initialized = true;
       return this._initialized;
     } catch (error) {
@@ -73,29 +80,26 @@ class GenericGuardianProvider {
     } = (
       await this.fetcher.fetch({
         method: "get",
-        baseURL: GuardianProviderFactory.apiAddress,
-        url: `/accounts/${GuardianProviderFactory.address}/?withGuardianInfo=true`,
+        baseURL: this.apiAddress,
+        url: `/accounts/${this.address}/?withGuardianInfo=true`,
       })
     ).data;
 
-    const providerData = ProvidersResolver.getProviderByServiceId(
-      activeGuardianServiceUid ?? "ServiceID" // TODO: if the account is not guarded, let the user choose the guardian provider
-    );
-
-    if (!providerData) {
+    if (!this.activeGuardianServiceUid !== activeGuardianServiceUid) {
       throw new Error(
-        `"${activeGuardianServiceUid}" service provider could not be resolved.`
+        `"${this.activeGuardianServiceUid}" was changed to "${activeGuardianServiceUid}".`
       );
     }
-
     this.init({
       activeGuardianServiceUid,
       isGuarded,
       activeGuardianAddress,
       pendingGuardianActivationEpoch,
       pendingGuardianAddress,
-      providerServiceUrl:
-        providerData.providerServiceUrl[GuardianProviderFactory.networkId],
+      providerServiceUrl: this.guardianServiceApiUrl,
+      address: this.address,
+      networkId: this.networkId,
+      apiAddress: this.apiAddress,
     });
     return true;
   }
@@ -135,6 +139,18 @@ class GenericGuardianProvider {
     return this._codeInputLength > this._maxCodeInputLenght
       ? this._maxCodeInputLenght
       : this._codeInputLength;
+  }
+
+  public get address(): string {
+    return this._address;
+  }
+
+  public get networkId(): string {
+    return this._networkId;
+  }
+
+  public get apiAddress(): string {
+    return this._apiAddress;
   }
 }
 

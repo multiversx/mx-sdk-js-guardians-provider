@@ -32,4 +32,7 @@ export interface IInitData {
   activeGuardianAddress: string;
   pendingGuardianActivationEpoch: number;
   pendingGuardianAddress: string;
+  address: string;
+  apiAddress: string;
+  networkId: string;
 }

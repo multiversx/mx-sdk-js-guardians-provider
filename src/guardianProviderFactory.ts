@@ -2,28 +2,15 @@ import { AxiosRequestConfig } from "axios";
 import ApiFetcher from "./apiFetcher";
 import GenericGuardianProvider from "./genericGuardianProvider";
 import { IInitData } from "./interface";
-import ProvidersResolver from "./providersResolver";
+import GuardianProvidersResolver from "./guardianProvidersResolver";
 
-const DEFAULT_NETWORK_ID = "mainnet";
-
+const DEFAULT_SERVICE_ID = "ServiceID";
+interface CreateOptionsType {
+  networkId: string;
+  serviceId?: string;
+}
 class GuardianProviderFactory {
   private static fetcher = ApiFetcher.getInstance();
-  private static _instance: GenericGuardianProvider | null;
-  private static _apiAddress = "";
-  private static _address = "";
-  private static _networkId = "";
-
-  public static get apiAddress(): string {
-    return this._apiAddress;
-  }
-
-  public static get address(): string {
-    return this._address;
-  }
-
-  public static get networkId(): string {
-    return this._networkId;
-  }
 
   constructor() {
     throw new Error(
@@ -34,41 +21,39 @@ class GuardianProviderFactory {
   static async createProvider(
     address: string,
     apiAddress: string,
-    networkId?: string
+    { networkId, serviceId }: CreateOptionsType
   ): Promise<GenericGuardianProvider> {
-    this._apiAddress = apiAddress;
-    this._address = address;
-    this._networkId = networkId ?? DEFAULT_NETWORK_ID;
     const guardianInitData =
       await GuardianProviderFactory.getAccountGuardianInitData(
         address,
-        apiAddress
+        apiAddress,
+        networkId
       );
 
-    const providerData = ProvidersResolver.getProviderByServiceId(
-      guardianInitData.activeGuardianServiceUid ?? "ServiceID" // TODO: if the account is not guarded, let the user choose the guardian provider
+    const providerData = GuardianProvidersResolver.getProviderByServiceId(
+      guardianInitData.activeGuardianServiceUid ||
+        serviceId ||
+        DEFAULT_SERVICE_ID
     );
 
     if (!providerData)
       throw new Error(
-        `"${guardianInitData.activeGuardianServiceUid}" service provider could not be resolved.`
+        `"${
+          guardianInitData.activeGuardianServiceUid || serviceId
+        }" service provider could not be resolved.`
       );
 
     const provider = new providerData.provider();
-    provider.init({
+
+    await provider.init({
       ...guardianInitData,
-      providerServiceUrl: providerData.providerServiceUrl[this._networkId],
+      apiAddress,
+      address,
+      networkId: networkId,
+      providerServiceUrl: providerData.providerServiceUrl[networkId],
     });
 
     return provider;
-  }
-
-  public getInstance(): GenericGuardianProvider {
-    if (!GuardianProviderFactory._instance)
-      throw new Error(
-        "Error: Instantiation failed: Use GuardianProviderFactory.createProvider() first in order to initialize the provider."
-      );
-    return GuardianProviderFactory._instance;
   }
 
   public static setRequestTransformer(
@@ -79,7 +64,8 @@ class GuardianProviderFactory {
 
   private static async getAccountGuardianInitData(
     address: string,
-    apiAddress: string
+    apiAddress: string,
+    networkId: string
   ): Promise<IInitData> {
     const {
       activeGuardianServiceUid,
@@ -94,13 +80,15 @@ class GuardianProviderFactory {
         url: `/accounts/${address}/?withGuardianInfo=true`,
       })
     ).data;
-
     return {
       activeGuardianServiceUid,
       isGuarded,
       activeGuardianAddress,
       pendingGuardianActivationEpoch,
       pendingGuardianAddress,
+      address,
+      apiAddress,
+      networkId: networkId,
     };
   }
 }
