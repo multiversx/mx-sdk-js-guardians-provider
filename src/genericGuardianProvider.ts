@@ -71,6 +71,7 @@ class GenericGuardianProvider {
     if (!this.initialized) {
       throw new Error("Guardian provider is not initialized.");
     }
+
     const {
       activeGuardianServiceUid,
       isGuarded,
@@ -85,7 +86,7 @@ class GenericGuardianProvider {
       })
     ).data;
 
-    if (!this.activeGuardianServiceUid !== activeGuardianServiceUid) {
+    if (this.activeGuardianServiceUid !== activeGuardianServiceUid) {
       throw new Error(
         `"${this.activeGuardianServiceUid}" was changed to "${activeGuardianServiceUid}".`
       );
@@ -97,9 +98,9 @@ class GenericGuardianProvider {
       pendingGuardianActivationEpoch,
       pendingGuardianAddress,
       providerServiceUrl: this.guardianServiceApiUrl,
-      address: this.address,
-      networkId: this.networkId,
-      apiAddress: this.apiAddress,
+      address: this._address,
+      networkId: this._networkId,
+      apiAddress: this._apiAddress,
     });
     return true;
   }
@@ -129,7 +130,7 @@ class GenericGuardianProvider {
   }
 
   public get activeGuardianServiceUid(): string {
-    return this.activeGuardianServiceUid;
+    return this._activeGuardianServiceUid;
   }
 
   public get codeInputLength(): number {
