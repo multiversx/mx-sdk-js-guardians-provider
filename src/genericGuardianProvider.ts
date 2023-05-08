@@ -86,11 +86,6 @@ class GenericGuardianProvider {
       })
     ).data;
 
-    if (this.activeGuardianServiceUid !== activeGuardianServiceUid) {
-      throw new Error(
-        `"${this.activeGuardianServiceUid}" was changed to "${activeGuardianServiceUid}".`
-      );
-    }
     this.init({
       activeGuardianServiceUid,
       isGuarded,
