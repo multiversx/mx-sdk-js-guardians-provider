@@ -35,4 +35,6 @@ export interface IInitData {
   address: string;
   apiAddress: string;
   networkId: string;
+  registrationDelay: number;
+  backoffWrongCode: number;
 }

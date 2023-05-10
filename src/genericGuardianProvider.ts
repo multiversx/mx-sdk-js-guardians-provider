@@ -16,6 +16,8 @@ class GenericGuardianProvider {
   protected _address = "";
   protected _networkId = "";
   protected _apiAddress = "";
+  protected _registrationDelay: number = 0;
+  protected _backoffWrongCode: number = 0;
 
   public async applyGuardianSignature(
     _transactions: Transaction[],
@@ -48,6 +50,8 @@ class GenericGuardianProvider {
     address,
     apiAddress,
     networkId,
+    registrationDelay,
+    backoffWrongCode,
   }: IInitData & { providerServiceUrl: string }): Promise<boolean> {
     try {
       this._guardianServiceApiUrl = providerServiceUrl;
@@ -61,6 +65,8 @@ class GenericGuardianProvider {
       this._apiAddress = apiAddress;
       this._networkId = networkId;
       this._initialized = true;
+      this._registrationDelay = registrationDelay;
+      this._backoffWrongCode = backoffWrongCode;
       return this._initialized;
     } catch (error) {
       throw error;
@@ -96,6 +102,8 @@ class GenericGuardianProvider {
       address: this._address,
       networkId: this._networkId,
       apiAddress: this._apiAddress,
+      registrationDelay: this._registrationDelay,
+      backoffWrongCode: this._backoffWrongCode,
     });
     return true;
   }
@@ -147,6 +155,14 @@ class GenericGuardianProvider {
 
   public get apiAddress(): string {
     return this._apiAddress;
+  }
+
+  public get registrationDelay(): number | undefined {
+    return this._registrationDelay;
+  }
+
+  public get backoffWrongCode(): number | undefined {
+    return this._backoffWrongCode;
   }
 }
 

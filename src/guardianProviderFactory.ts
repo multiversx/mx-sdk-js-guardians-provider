@@ -45,12 +45,22 @@ class GuardianProviderFactory {
 
     const provider = new providerData.provider();
 
+    const { data } = (
+      await this.fetcher.fetch({
+        method: "get",
+        baseURL: providerData.providerServiceUrl[networkId],
+        url: `/guardian/config`,
+      })
+    ).data;
+    console.log(data);
     await provider.init({
       ...guardianInitData,
       apiAddress,
       address,
       networkId: networkId,
       providerServiceUrl: providerData.providerServiceUrl[networkId],
+      backoffWrongCode: data["backoff-wrong-code"],
+      registrationDelay: data["registration-delay"],
     });
 
     return provider;
@@ -80,6 +90,7 @@ class GuardianProviderFactory {
         url: `/accounts/${address}/?withGuardianInfo=true`,
       })
     ).data;
+
     return {
       activeGuardianServiceUid,
       isGuarded,
@@ -89,6 +100,8 @@ class GuardianProviderFactory {
       address,
       apiAddress,
       networkId: networkId,
+      registrationDelay: 0,
+      backoffWrongCode: 0,
     };
   }
 }
