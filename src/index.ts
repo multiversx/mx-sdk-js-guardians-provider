@@ -8,6 +8,4 @@ export * from "./guardianProviderFactory";
     "https://testnet-api.multiversx.com",
     { networkId: "testnet", serviceId: "ServiceID" }
   );
-
-  console.log(provider.registrationDelay);
 })();

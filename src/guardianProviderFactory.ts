@@ -52,7 +52,6 @@ class GuardianProviderFactory {
         url: `/guardian/config`,
       })
     ).data;
-    console.log(data);
     await provider.init({
       ...guardianInitData,
       apiAddress,
