@@ -26,7 +26,7 @@ class GenericGuardianProvider {
     throw new Error("Method not implemented.");
   }
 
-  public async registerGuardian(options?: IRegisterOptions): Promise<{
+  public async registerGuardian(_options?: IRegisterOptions): Promise<{
     qr: string;
     guardianAddress: string;
   }> {
