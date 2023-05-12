@@ -1,5 +1,6 @@
 import { Transaction } from "@multiversx/sdk-core/out";
 import GenericGuardianProvider from "../genericGuardianProvider";
+import { IRegisterOptions } from "../interface";
 import { Address, Signature } from "../primitives";
 
 enum EndpointsEnum {
@@ -54,7 +55,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
     }
   }
 
-  override async registerGuardian(): Promise<{
+  override async registerGuardian(options?: IRegisterOptions): Promise<{
     qr: string;
     guardianAddress: string;
   }> {
@@ -67,7 +68,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         baseURL: this.guardianServiceApiUrl,
         url: "/guardian/register",
         method: "POST",
-        data: { tag: "" },
+        data: { tag: options?.tag ?? "" },
       });
       return { qr, guardianAddress };
     } catch (error: any) {

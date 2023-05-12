@@ -38,3 +38,7 @@ export interface IInitData {
   registrationDelay: number;
   backoffWrongCode: number;
 }
+
+export interface IRegisterOptions {
+  tag?: string;
+}

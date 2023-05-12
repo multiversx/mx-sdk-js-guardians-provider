@@ -1,6 +1,6 @@
 import { Transaction } from "@multiversx/sdk-core/out";
 import ApiFetcher from "./apiFetcher";
-import { IInitData } from "./interface";
+import { IInitData, IRegisterOptions } from "./interface";
 
 class GenericGuardianProvider {
   protected _isAccountGuarded = false;
@@ -26,7 +26,7 @@ class GenericGuardianProvider {
     throw new Error("Method not implemented.");
   }
 
-  public async registerGuardian(): Promise<{
+  public async registerGuardian(options?: IRegisterOptions): Promise<{
     qr: string;
     guardianAddress: string;
   }> {
