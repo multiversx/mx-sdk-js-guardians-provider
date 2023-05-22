@@ -28,6 +28,15 @@ class GuardianProvidersResolver {
         mainnet: "https://tcs-api.multiversx.com",
       },
     },
+    {
+      serviceId: "ServiceID",
+      provider: TCSGuardianProvider,
+      providerServiceUrl: {
+        testnet: "https://testnet-tcs-api.multiversx.com",
+        devnet: "https://devnet-tcs-api.multiversx.com",
+        mainnet: "https://tcs-api.multiversx.com",
+      },
+    },
   ];
   static getProviderByServiceId(serviceId: string) {
     return this.providers.find((provider) => provider.serviceId === serviceId);
