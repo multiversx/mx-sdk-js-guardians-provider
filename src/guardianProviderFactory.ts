@@ -2,13 +2,15 @@ import { AxiosRequestConfig } from "axios";
 import ApiFetcher from "./apiFetcher";
 import GenericGuardianProvider from "./genericGuardianProvider";
 import { IInitData } from "./interface";
-import GuardianProvidersResolver from "./guardianProvidersResolver";
+import GuardianProvidersResolver, {
+  DEFAULT_SERVICE_ID,
+} from "./guardianProvidersResolver";
 
-const DEFAULT_SERVICE_ID = "ServiceID";
 interface CreateOptionsType {
   networkId: string;
   serviceId?: string;
 }
+
 class GuardianProviderFactory {
   private static fetcher = ApiFetcher.getInstance();
 
@@ -31,8 +33,8 @@ class GuardianProviderFactory {
       );
 
     const providerData = GuardianProvidersResolver.getProviderByServiceId(
-      guardianInitData.activeGuardianServiceUid ||
-        serviceId ||
+      serviceId ||
+        guardianInitData.activeGuardianServiceUid ||
         DEFAULT_SERVICE_ID
     );
 
@@ -54,6 +56,10 @@ class GuardianProviderFactory {
     ).data;
     await provider.init({
       ...guardianInitData,
+      activeGuardianServiceUid:
+        serviceId ||
+        guardianInitData.activeGuardianServiceUid ||
+        DEFAULT_SERVICE_ID,
       apiAddress,
       address,
       networkId: networkId,

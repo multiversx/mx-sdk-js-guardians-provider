@@ -1,6 +1,8 @@
 import GenericGuardianProvider from "./genericGuardianProvider";
 import TCSGuardianProvider from "./providers/TCSGuardianProvider";
 
+export const DEFAULT_SERVICE_ID = "MultiversXTCSService";
+
 enum NetworksEnum {
   testnet = "testnet",
   devnet = "devnet",
@@ -18,7 +20,7 @@ interface ProviderInfoType {
 class GuardianProvidersResolver {
   protected static providers: Array<ProviderInfoType> = [
     {
-      serviceId: "ServiceID",
+      serviceId: DEFAULT_SERVICE_ID,
       provider: TCSGuardianProvider,
       providerServiceUrl: {
         testnet: "https://testnet-tcs-api.multiversx.com",
@@ -47,6 +49,10 @@ class GuardianProvidersResolver {
       }
       return provider;
     });
+  }
+
+  public static get defaultServiceId(): string {
+    return DEFAULT_SERVICE_ID;
   }
 }
 
