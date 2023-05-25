@@ -11,6 +11,12 @@ interface CreateOptionsType {
   serviceId?: string;
 }
 
+interface CreateProviderParamsType {
+  address: string;
+  apiAddress: string;
+  options: CreateOptionsType;
+}
+
 class GuardianProviderFactory {
   private static fetcher = ApiFetcher.getInstance();
 
@@ -20,11 +26,11 @@ class GuardianProviderFactory {
     );
   }
 
-  static async createProvider(
-    address: string,
-    apiAddress: string,
-    { networkId, serviceId }: CreateOptionsType
-  ): Promise<GenericGuardianProvider> {
+  static async createProvider({
+    address,
+    apiAddress,
+    options: { networkId, serviceId },
+  }: CreateProviderParamsType): Promise<GenericGuardianProvider> {
     const guardianInitData =
       await GuardianProviderFactory.getAccountGuardianInitData(
         address,

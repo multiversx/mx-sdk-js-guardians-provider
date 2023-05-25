@@ -9,6 +9,8 @@ enum NetworksEnum {
   mainnet = "mainnet",
 }
 
+type ServiceNetworkType = Record<string, string>;
+
 interface ProviderInfoType {
   serviceId: string;
   provider: typeof GenericGuardianProvider;
@@ -39,21 +41,28 @@ class GuardianProvidersResolver {
     },
   ];
   static getProviderByServiceId(serviceId: string) {
-    return this.providers.find((provider) => provider.serviceId === serviceId);
+    const result = this.providers.find(
+      (provider) => provider.serviceId === serviceId
+    );
+    console.log(result);
+    return result;
   }
 
-  static addNetworksToServiceUrl(
-    serviceId: string,
-    networks: Array<{ id: string; url: string }>
-  ) {
+  static addNetworksToServiceUrl({
+    serviceId,
+    networks,
+  }: {
+    serviceId: string;
+    networks: ServiceNetworkType[];
+  }) {
     this.providers = this.providers.map((provider) => {
       if (provider.serviceId === serviceId) {
         provider.providerServiceUrl = {
           ...provider.providerServiceUrl,
-          ...networks.reduce((acc: any, network) => {
+          ...networks.reduce((acc: ServiceNetworkType, network) => {
             acc[network.id] = network.url;
             return acc;
-          }, {}),
+          }, {} as ServiceNetworkType),
         };
       }
       return provider;
