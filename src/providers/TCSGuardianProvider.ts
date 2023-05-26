@@ -76,7 +76,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
       const {
         data: {
           data: {
-            opt: {
+            otp: {
               qr,
               ["guardian-address"]: guardianAddress,
               scheme,
