@@ -1,10 +1,12 @@
-import { Transaction } from "@multiversx/sdk-core/out";
+import { Address, Transaction } from "@multiversx/sdk-core/out";
 import GenericGuardianProvider from "../genericGuardianProvider";
 import { IRegisterOptions } from "../interface";
-import { Address, Signature } from "../primitives";
+import { Signature } from "../primitives";
 
 enum EndpointsEnum {
   SignMultipleTransactions = "/guardian/sign-multiple-transactions",
+  RegisterGuardian = "/guardian/register",
+  VerifyCode = "/guardian/verify-code",
 }
 
 class TCSGuardianProvider extends GenericGuardianProvider {
@@ -30,14 +32,16 @@ class TCSGuardianProvider extends GenericGuardianProvider {
     });
 
     try {
-      const rawCosignedTransactions = (
-        await this.fetcher.fetch({
-          method: "post",
-          baseURL: this.guardianServiceApiUrl,
-          url: EndpointsEnum.SignMultipleTransactions,
-          data: { code, transactions: txToSend },
-        })
-      ).data.data.transactions;
+      const {
+        data: {
+          data: { transactions: rawCosignedTransactions },
+        },
+      } = await this.fetcher.fetch({
+        method: "post",
+        baseURL: this.guardianServiceApiUrl,
+        url: EndpointsEnum.SignMultipleTransactions,
+        data: { code, transactions: txToSend },
+      });
 
       for (let i = 0; i < rawCosignedTransactions.length; i++) {
         const transaction = transactions[i];
@@ -54,7 +58,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
       throw error;
     }
   }
-
+  //TODO: add new fields returned by the API (secret, etc)
   override async registerGuardian(options?: IRegisterOptions): Promise<{
     qr: string;
     guardianAddress: string;
@@ -66,7 +70,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         },
       } = await this.fetcher.fetch({
         baseURL: this.guardianServiceApiUrl,
-        url: "/guardian/register",
+        url: EndpointsEnum.RegisterGuardian,
         method: "POST",
         data: { tag: options?.tag ?? "" },
       });
@@ -86,7 +90,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
     try {
       const response = await this.fetcher.fetch({
         baseURL: this.guardianServiceApiUrl,
-        url: "/guardian/verify-code",
+        url: EndpointsEnum.VerifyCode,
         method: "POST",
         data: { code, guardian },
       });
