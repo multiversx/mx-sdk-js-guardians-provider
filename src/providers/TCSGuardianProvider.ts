@@ -76,17 +76,19 @@ class TCSGuardianProvider extends GenericGuardianProvider {
       const {
         data: {
           data: {
-            qr,
-            ["guardian-address"]: guardianAddress,
-            scheme,
-            host,
-            issuer,
-            account,
-            algorithm,
-            digits,
-            period,
-            secret,
-            counter,
+            opt: {
+              qr,
+              ["guardian-address"]: guardianAddress,
+              scheme,
+              host,
+              issuer,
+              account,
+              algorithm,
+              digits,
+              period,
+              secret,
+              counter,
+            },
           },
         },
       } = await this.fetcher.fetch({
