@@ -9,22 +9,34 @@ enum NetworksEnum {
   mainnet = "mainnet",
 }
 
-type ServiceNetworkType = Record<string, string>;
+type ServiceNetworkType = Record<NetworksEnum | string, string>;
 
-interface ProviderInfoType {
+interface IInjectableNetworkUrl {
+  /**
+   * Network identifier.
+   */
+  networkId: string;
+  /**
+   * Provider service network url.
+   */
+  url: string;
+}
+
+interface IProviderInfo {
+  /**
+   * `serviceId` is the unique identifier of the `IProviderInfo` object.
+   */
   serviceId: string;
   provider: typeof GenericGuardianProvider;
-  providerServiceUrl: {
-    [key in NetworksEnum | any]: string;
-  };
+  providerServiceNetworkUrls: ServiceNetworkType;
 }
 
 class GuardianProvidersResolver {
-  protected static providers: Array<ProviderInfoType> = [
+  protected static providers: Array<IProviderInfo> = [
     {
       serviceId: DEFAULT_SERVICE_ID,
       provider: TCSGuardianProvider,
-      providerServiceUrl: {
+      providerServiceNetworkUrls: {
         testnet: "https://testnet-tcs-api.multiversx.com",
         devnet: "https://devnet-tcs-api.multiversx.com",
         mainnet: "https://tcs-api.multiversx.com",
@@ -33,36 +45,36 @@ class GuardianProvidersResolver {
     {
       serviceId: "ServiceID",
       provider: TCSGuardianProvider,
-      providerServiceUrl: {
+      providerServiceNetworkUrls: {
         testnet: "https://testnet-tcs-api.multiversx.com",
         devnet: "https://devnet-tcs-api.multiversx.com",
         mainnet: "https://tcs-api.multiversx.com",
       },
     },
   ];
-  static getProviderByServiceId(serviceId: string) {
+
+  static getProviderByServiceId(serviceId: string): IProviderInfo | undefined {
     const result = this.providers.find(
       (provider) => provider.serviceId === serviceId
     );
-    console.log(result);
     return result;
   }
 
-  static addNetworksToServiceUrl({
+  /**
+   * Extends or overrides the service networks url list based on network.
+   */
+  static extendProviderInfoNetworkUrls({
     serviceId,
-    networks,
+    network,
   }: {
-    serviceId: string;
-    networks: ServiceNetworkType[];
+    serviceId: IProviderInfo["serviceId"];
+    network: IInjectableNetworkUrl;
   }) {
     this.providers = this.providers.map((provider) => {
       if (provider.serviceId === serviceId) {
-        provider.providerServiceUrl = {
-          ...provider.providerServiceUrl,
-          ...networks.reduce((acc: ServiceNetworkType, network) => {
-            acc[network.id] = network.url;
-            return acc;
-          }, {} as ServiceNetworkType),
+        provider.providerServiceNetworkUrls = {
+          ...provider.providerServiceNetworkUrls,
+          [network.networkId]: network.url,
         };
       }
       return provider;

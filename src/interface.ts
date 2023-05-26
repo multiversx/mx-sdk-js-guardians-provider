@@ -2,10 +2,6 @@ export interface ISignature {
   hex(): string;
 }
 
-export interface IAddress {
-  bech32(): string;
-}
-
 export interface IAPIAccountResponse {
   data: {
     address: string;

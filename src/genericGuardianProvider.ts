@@ -19,6 +19,7 @@ class GenericGuardianProvider {
   protected _registrationDelay: number = 0;
   protected _backoffWrongCode: number = 0;
 
+  //TODO: make code optional (invisible guardian or other guardian service usecase)
   public async applyGuardianSignature(
     _transactions: Transaction[],
     _code: string
@@ -73,24 +74,27 @@ class GenericGuardianProvider {
     }
   }
 
+  /**
+   * Used after transactions that affect guardian state
+   */
   public async reinitialize(): Promise<boolean> {
     if (!this.initialized) {
       throw new Error("Guardian provider is not initialized.");
     }
 
     const {
-      activeGuardianServiceUid,
-      isGuarded,
-      activeGuardianAddress,
-      pendingGuardianActivationEpoch,
-      pendingGuardianAddress,
-    } = (
-      await this.fetcher.fetch({
-        method: "get",
-        baseURL: this.apiAddress,
-        url: `/accounts/${this.address}/?withGuardianInfo=true`,
-      })
-    ).data;
+      data: {
+        activeGuardianServiceUid,
+        isGuarded,
+        activeGuardianAddress,
+        pendingGuardianActivationEpoch,
+        pendingGuardianAddress,
+      },
+    } = await this.fetcher.fetch({
+      method: "get",
+      baseURL: this.apiAddress,
+      url: `/accounts/${this.address}/?withGuardianInfo=true`,
+    });
 
     this.init({
       activeGuardianServiceUid,

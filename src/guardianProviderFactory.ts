@@ -6,15 +6,22 @@ import GuardianProvidersResolver, {
   DEFAULT_SERVICE_ID,
 } from "./guardianProvidersResolver";
 
-interface CreateOptionsType {
-  networkId: string;
+//TODO: document id readme how service id enforces the provider to resolve to a specific provider (change guardian provider usecase)
+interface ICreateOptions {
+  /**
+   * If `serviceId` is provided, the factory is forced to resolve to it.
+   */
   serviceId?: string;
 }
 
-interface CreateProviderParamsType {
+interface ICreateProviderParams {
   address: string;
   apiAddress: string;
-  options: CreateOptionsType;
+  /**
+   * The network id used to resolve the provider service url.
+   */
+  networkId: string;
+  options?: ICreateOptions;
 }
 
 class GuardianProviderFactory {
@@ -29,65 +36,69 @@ class GuardianProviderFactory {
   static async createProvider({
     address,
     apiAddress,
-    options: { networkId, serviceId },
-  }: CreateProviderParamsType): Promise<GenericGuardianProvider> {
+    networkId,
+    options,
+  }: ICreateProviderParams): Promise<GenericGuardianProvider> {
     const guardianInitData =
-      await GuardianProviderFactory.getAccountGuardianInitData(
+      await GuardianProviderFactory.getAccountGuardianInitData({
         address,
         apiAddress,
-        networkId
-      );
+      });
+
+    const activeGuardianServiceUid =
+      options?.serviceId ||
+      guardianInitData.activeGuardianServiceUid ||
+      DEFAULT_SERVICE_ID;
 
     const providerData = GuardianProvidersResolver.getProviderByServiceId(
-      serviceId ||
-        guardianInitData.activeGuardianServiceUid ||
-        DEFAULT_SERVICE_ID
+      activeGuardianServiceUid
     );
 
     if (!providerData)
       throw new Error(
-        `"${
-          guardianInitData.activeGuardianServiceUid || serviceId
-        }" service provider could not be resolved.`
+        `"${activeGuardianServiceUid}" service provider could not be resolved.`
       );
 
-    const provider = new providerData.provider();
+    const { provider: ResolvedProvider } = providerData;
 
-    const { data } = (
-      await this.fetcher.fetch({
-        method: "get",
-        baseURL: providerData.providerServiceUrl[networkId],
-        url: `/guardian/config`,
-      })
-    ).data;
+    const provider = new ResolvedProvider();
+
+    //TODO: move to tcs implementation in order to not create dependecy on tcs
+    const {
+      data: { data },
+    } = await this.fetcher.fetch({
+      method: "get",
+      baseURL: providerData.providerServiceNetworkUrls[networkId],
+      url: `/guardian/config`,
+    });
+
     await provider.init({
       ...guardianInitData,
-      activeGuardianServiceUid:
-        serviceId ||
-        guardianInitData.activeGuardianServiceUid ||
-        DEFAULT_SERVICE_ID,
+      activeGuardianServiceUid,
       apiAddress,
       address,
-      networkId: networkId,
-      providerServiceUrl: providerData.providerServiceUrl[networkId],
+      networkId,
+      providerServiceUrl: providerData.providerServiceNetworkUrls[networkId],
       backoffWrongCode: data["backoff-wrong-code"],
       registrationDelay: data["registration-delay"],
     });
 
     return provider;
   }
-
+  //TODO: document in readme
   public static setRequestTransformer(
     transformer: (config: AxiosRequestConfig) => AxiosRequestConfig
   ): void {
     this.fetcher.requestTransformer = transformer;
   }
 
-  private static async getAccountGuardianInitData(
-    address: string,
-    apiAddress: string,
-    networkId: string
-  ): Promise<IInitData> {
+  private static async getAccountGuardianInitData({
+    address,
+    apiAddress,
+  }: {
+    address: string;
+    apiAddress: string;
+  }): Promise<Omit<IInitData, "apiAddress" | "networkId" | "address">> {
     const {
       activeGuardianServiceUid,
       isGuarded,
@@ -108,9 +119,6 @@ class GuardianProviderFactory {
       activeGuardianAddress,
       pendingGuardianActivationEpoch,
       pendingGuardianAddress,
-      address,
-      apiAddress,
-      networkId: networkId,
       registrationDelay: 0,
       backoffWrongCode: 0,
     };
