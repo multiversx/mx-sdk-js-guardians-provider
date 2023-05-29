@@ -70,8 +70,14 @@ class GuardianProvidersResolver {
     serviceId: IProviderInfo["serviceId"];
     network: IInjectableNetworkUrl;
   }) {
+    console.log("inject herere!");
     this.providers = this.providers.map((provider) => {
+      console.log(provider.serviceId, serviceId);
       if (provider.serviceId === serviceId) {
+        console.log("inject herere!", {
+          ...provider.providerServiceNetworkUrls,
+          [network.networkId]: network.url,
+        });
         provider.providerServiceNetworkUrls = {
           ...provider.providerServiceNetworkUrls,
           [network.networkId]: network.url,
