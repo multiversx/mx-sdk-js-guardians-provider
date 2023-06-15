@@ -58,36 +58,25 @@ class TCSGuardianProvider extends GenericGuardianProvider {
       throw error;
     }
   }
-  //TODO: add new fields returned by the API (secret, etc)
+
   override async registerGuardian(options?: IRegisterOptions): Promise<{
-    qr: string;
     guardianAddress: string;
-    // scheme: string;
-    // host: string;
-    // issuer: string;
-    // account: string;
-    // algorithm: string;
-    // digits: number;
-    // period: number;
-    // secret: string;
-    // counter: number;
+    otp: {
+      scheme: string;
+      host: string;
+      issuer: string;
+      account: string;
+      algorithm: string;
+      digits: number;
+      period: number;
+      secret: string;
+      counter: number;
+    };
   }> {
     try {
       const {
         data: {
-          data: {
-            qr,
-            ["guardian-address"]: guardianAddress,
-            // scheme,
-            // host,
-            // issuer,
-            // account,
-            // algorithm,
-            // digits,
-            // period,
-            // secret,
-            // counter,
-          },
+          data: { ["guardian-address"]: guardianAddress, otp },
         },
       } = await this.fetcher.fetch({
         baseURL: this.guardianServiceApiUrl,
@@ -96,17 +85,8 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         data: { tag: options?.tag ?? "" },
       });
       return {
-        qr,
         guardianAddress,
-        // scheme,
-        // host,
-        // issuer,
-        // account,
-        // algorithm,
-        // digits,
-        // period,
-        // secret,
-        // counter,
+        otp,
       };
     } catch (error: any) {
       throw error;

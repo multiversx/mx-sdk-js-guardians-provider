@@ -28,8 +28,18 @@ class GenericGuardianProvider {
   }
 
   public async registerGuardian(_options?: IRegisterOptions): Promise<{
-    qr: string;
     guardianAddress: string;
+    otp: {
+      scheme: string;
+      host: string;
+      issuer: string;
+      account: string;
+      algorithm: string;
+      digits: number;
+      period: number;
+      secret: string;
+      counter: number;
+    };
   }> {
     throw new Error("Method not implemented.");
   }
