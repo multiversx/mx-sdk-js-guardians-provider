@@ -54,6 +54,10 @@ class GuardianProviderFactory {
       activeGuardianServiceUid
     );
 
+    const pendingProviderData =
+      GuardianProvidersResolver.getProviderByServiceId(
+        guardianInitData.pendingGuardianServiceUid || ""
+      );
     if (!providerData)
       throw new Error(
         `"${activeGuardianServiceUid}" service provider could not be resolved.`
@@ -75,12 +79,16 @@ class GuardianProviderFactory {
     await provider.init({
       ...guardianInitData,
       activeGuardianServiceUid,
+      pendingGuardianServiceUid: guardianInitData.pendingGuardianServiceUid,
       apiAddress,
       address,
       networkId,
       providerServiceUrl: providerData.providerServiceNetworkUrls[networkId],
       backoffWrongCode: data["backoff-wrong-code"],
       registrationDelay: data["registration-delay"],
+      pendingProviderServiceUrl: pendingProviderData
+        ? pendingProviderData.providerServiceNetworkUrls[networkId]
+        : "",
     });
 
     return provider;
@@ -105,6 +113,7 @@ class GuardianProviderFactory {
       activeGuardianAddress,
       pendingGuardianActivationEpoch,
       pendingGuardianAddress,
+      pendingGuardianServiceUid,
     } = (
       await this.fetcher.fetch({
         method: "get",
@@ -119,6 +128,7 @@ class GuardianProviderFactory {
       activeGuardianAddress,
       pendingGuardianActivationEpoch,
       pendingGuardianAddress,
+      pendingGuardianServiceUid,
       registrationDelay: 0,
       backoffWrongCode: 0,
     };

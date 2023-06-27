@@ -8,7 +8,9 @@ class GenericGuardianProvider {
   protected _initialized = false;
   protected _pendingGuardianAddress = "";
   protected _pendingGuardianActivationEpoch = 0;
+  protected _pendingGuardianServiceUid = "";
   protected _guardianServiceApiUrl = "";
+  protected _pendingGuardianServiceApiUrl = "";
   protected _activeGuardianServiceUid = "";
   protected fetcher = ApiFetcher.getInstance();
   protected _codeInputLength = 0;
@@ -57,13 +59,18 @@ class GenericGuardianProvider {
     activeGuardianAddress,
     pendingGuardianActivationEpoch,
     pendingGuardianAddress,
+    pendingGuardianServiceUid,
     providerServiceUrl,
+    pendingProviderServiceUrl,
     address,
     apiAddress,
     networkId,
     registrationDelay,
     backoffWrongCode,
-  }: IInitData & { providerServiceUrl: string }): Promise<boolean> {
+  }: IInitData & {
+    providerServiceUrl: string;
+    pendingProviderServiceUrl: string;
+  }): Promise<boolean> {
     try {
       this._guardianServiceApiUrl = providerServiceUrl;
       this._isAccountGuarded = isGuarded ?? false;
@@ -78,6 +85,8 @@ class GenericGuardianProvider {
       this._initialized = true;
       this._registrationDelay = registrationDelay;
       this._backoffWrongCode = backoffWrongCode;
+      this._pendingGuardianServiceUid = pendingGuardianServiceUid ?? "";
+      this._pendingGuardianServiceApiUrl = pendingProviderServiceUrl;
       return this._initialized;
     } catch (error) {
       throw error;
@@ -113,6 +122,7 @@ class GenericGuardianProvider {
       pendingGuardianActivationEpoch,
       pendingGuardianAddress,
       providerServiceUrl: this.guardianServiceApiUrl,
+      pendingProviderServiceUrl: this.pendingGuardianServiceApiUrl,
       address: this._address,
       networkId: this._networkId,
       apiAddress: this._apiAddress,
@@ -177,6 +187,14 @@ class GenericGuardianProvider {
 
   public get backoffWrongCode(): number | undefined {
     return this._backoffWrongCode;
+  }
+
+  public get pendingGuardianServiceUid(): string {
+    return this._pendingGuardianServiceUid;
+  }
+
+  public get pendingGuardianServiceApiUrl(): string {
+    return this._pendingGuardianServiceApiUrl;
   }
 }
 
