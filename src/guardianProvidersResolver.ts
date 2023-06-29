@@ -38,8 +38,8 @@ class GuardianProvidersResolver {
       provider: TCSGuardianProvider,
       providerServiceNetworkUrls: {
         testnet: "https://testnet-tcs-api.multiversx.com",
-        devnet: "https://devnet-tools.multiversx.com/guardian",
-        mainnet: "https://tools.multiversx.com/guardian",
+        devnet: "https://devnet-tools.multiversx.com",
+        mainnet: "https://tools.multiversx.com",
       },
     },
     {
@@ -47,8 +47,8 @@ class GuardianProvidersResolver {
       provider: TCSGuardianProvider,
       providerServiceNetworkUrls: {
         testnet: "https://testnet-tcs-api.multiversx.com",
-        devnet: "https://devnet-tools.multiversx.com/guardian",
-        mainnet: "https://tools.multiversx.com/guardian",
+        devnet: "https://devnet-tools.multiversx.com",
+        mainnet: "https://tools.multiversx.com",
       },
     },
   ];
