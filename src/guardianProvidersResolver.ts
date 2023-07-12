@@ -42,15 +42,6 @@ class GuardianProvidersResolver {
         mainnet: "https://tools.multiversx.com",
       },
     },
-    {
-      serviceId: "ServiceID",
-      provider: TCSGuardianProvider,
-      providerServiceNetworkUrls: {
-        testnet: "https://testnet-tcs-api.multiversx.com",
-        devnet: "https://devnet-tools.multiversx.com",
-        mainnet: "https://tools.multiversx.com",
-      },
-    },
   ];
 
   static getProviderByServiceId(serviceId: string): IProviderInfo | undefined {
