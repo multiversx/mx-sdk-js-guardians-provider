@@ -58,23 +58,32 @@ class GuardianProviderFactory {
       GuardianProvidersResolver.getProviderByServiceId(
         guardianInitData.pendingGuardianServiceUid || ""
       );
+
     if (!providerData)
       throw new Error(
         `"${activeGuardianServiceUid}" service provider could not be resolved.`
       );
 
     const { provider: ResolvedProvider } = providerData;
-
     const provider = new ResolvedProvider();
+    const baseURL = providerData.providerServiceNetworkUrls[networkId];
 
-    //TODO: move to tcs implementation in order to not create dependecy on tcs
+    if (!baseURL) {
+      throw new Error(`Guardian service base network URL does not exist for ID ${networkId}`);
+    }
+
+    //TODO: move to TCS implementation in order to not create dependency on tcs
     const {
       data: { data },
     } = await this.fetcher.fetch({
       method: "get",
-      baseURL: providerData.providerServiceNetworkUrls[networkId],
+      baseURL,
       url: `/guardian/config`,
     });
+
+    if (!data) {
+      throw new Error("Could not fetch guardian config");
+    }
 
     await provider.init({
       ...guardianInitData,
@@ -93,6 +102,7 @@ class GuardianProviderFactory {
 
     return provider;
   }
+
   //TODO: document in readme
   public static setRequestTransformer(
     transformer: (config: AxiosRequestConfig) => AxiosRequestConfig
