@@ -39,6 +39,7 @@ class GuardianProvidersResolver {
       providerServiceNetworkUrls: {
         testnet: "https://testnet-tcs-api.multiversx.com",
         devnet: "https://devnet-tools.multiversx.com",
+        'devnet-old': "https://devnet-old-tools.multiversx.com",
         mainnet: "https://tools.multiversx.com",
       },
     },
