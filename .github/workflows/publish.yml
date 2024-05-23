@@ -23,8 +23,11 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
 
-      - name: NPM install
-        run: npm ci
+      - name: Setup yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
 
       - name: Get package info
         id: package
