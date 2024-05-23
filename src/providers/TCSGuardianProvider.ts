@@ -16,11 +16,16 @@ class TCSGuardianProvider extends GenericGuardianProvider {
     super();
   }
 
-  override async applyGuardianSignature(
-    transactions: Transaction[],
-    code: string
-  ): Promise<Transaction[]> {
-    const txToSend = transactions.map((tx) => {
+  override async applyGuardianSignature({
+    transactions: transactionsArray,
+    code,
+    secondCode,
+  }: {
+    transactions: Transaction[];
+    code: string;
+    secondCode?: string;
+  }): Promise<Transaction[]> {
+    const transactions = transactionsArray.map((tx) => {
       const plainTx = tx.toPlainObject();
       plainTx.guardian = this._guardianAddress;
       return {
@@ -31,6 +36,11 @@ class TCSGuardianProvider extends GenericGuardianProvider {
       };
     });
 
+    const data = { code, transactions, "second-code": secondCode };
+    if (!secondCode) {
+      delete data["second-code"];
+    }
+
     try {
       const {
         data: {
@@ -40,11 +50,11 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         method: "post",
         baseURL: this.guardianServiceApiUrl,
         url: EndpointsEnum.SignMultipleTransactions,
-        data: { code, transactions: txToSend },
+        data,
       });
 
       for (let i = 0; i < rawCosignedTransactions.length; i++) {
-        const transaction = transactions[i];
+        const transaction = transactionsArray[i];
         const plainCoSignedTransaction = rawCosignedTransactions[i];
 
         transaction.applyGuardianSignature(
@@ -53,7 +63,7 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         transaction.setGuardian(new Address(this._guardianAddress));
       }
 
-      return transactions;
+      return transactionsArray;
     } catch (error) {
       throw error;
     }
@@ -95,17 +105,24 @@ class TCSGuardianProvider extends GenericGuardianProvider {
 
   override async verifyCode({
     code,
+    secondCode,
     guardian,
   }: {
     code: string;
+    secondCode?: string;
     guardian: string;
   }): Promise<boolean> {
     try {
-      const response = await this.fetcher.fetch({
+      const data = { code, guardian, "second-code": secondCode };
+      if (!secondCode) {
+        delete data["second-code"];
+      }
+
+      await this.fetcher.fetch({
         baseURL: this.guardianServiceApiUrl,
         url: EndpointsEnum.VerifyCode,
         method: "POST",
-        data: { code, guardian },
+        data,
       });
       return true;
     } catch (error: any) {

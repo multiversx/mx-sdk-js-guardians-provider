@@ -22,10 +22,11 @@ class GenericGuardianProvider {
   protected _backoffWrongCode: number = 0;
 
   //TODO: make code optional (invisible guardian or other guardian service usecase)
-  public async applyGuardianSignature(
-    _transactions: Transaction[],
-    _code: string
-  ): Promise<Transaction[]> {
+  public async applyGuardianSignature(_data: {
+    transactions: Transaction[];
+    code: string;
+    secondCode?: string;
+  }): Promise<Transaction[]> {
     throw new Error("Method not implemented.");
   }
 
