@@ -17,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Update yarn in publish script](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/11)
 
 
-
 ## [[1.1.0](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/10)] - 2024-02-01
 - [Update axios, node 18 and sdk-core](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/9)
 
