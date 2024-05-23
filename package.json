@@ -1,6 +1,6 @@
 {
   "name": "@multiversx/sdk-guardians-provider",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Co-Signing provider for MultiversX DApps",
   "main": "out/index.js",
   "types": "out/index.d.js",
