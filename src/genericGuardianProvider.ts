@@ -49,6 +49,7 @@ class GenericGuardianProvider {
 
   public async verifyCode(_params: {
     code: string;
+    secondCode?: string;
     guardian: string;
   }): Promise<boolean> {
     throw new Error("Method not implemented.");
