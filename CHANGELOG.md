@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [[2.0.1](https://github.com/multiversx/mx-sdk-js-guardians-provider/commit/19d419bf46c2edc08ecb32a36e05ac1b6821f5fe)] - 2024-05-23
+- [Added second code definition](https://github.com/multiversx/mx-sdk-js-guardians-provider/commit/e9a22e472d79ca937e75364ee9131713c77c63cb)
+
 ## [[2.0.0](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/12)] - 2024-05-23
 - [Added second code option](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/12)
 
