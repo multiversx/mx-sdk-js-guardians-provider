@@ -41,6 +41,7 @@ class GuardianProvidersResolver {
         devnet: "https://devnet-tools.multiversx.com",
         'devnet-old': "https://devnet-old-tools.multiversx.com",
         mainnet: "https://tools.multiversx.com",
+        battlenet: "https://tools.multiversx.com"
       },
     },
   ];
