@@ -1,7 +1,6 @@
-import { Address, Transaction } from "@multiversx/sdk-core/out";
+import { Address, Transaction } from "@multiversx/sdk-core";
 import GenericGuardianProvider from "../genericGuardianProvider";
 import { IRegisterOptions } from "../interface";
-import { Signature } from "../primitives";
 
 enum EndpointsEnum {
   SignMultipleTransactions = "/guardian/sign-multiple-transactions",
@@ -57,9 +56,11 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         const transaction = transactionsArray[i];
         const plainCoSignedTransaction = rawCosignedTransactions[i];
 
-        transaction.applyGuardianSignature(
-          new Signature(plainCoSignedTransaction.guardianSignature)
+        transaction.guardianSignature = Buffer.from(
+          plainCoSignedTransaction.guardianSignature,
+          "hex"
         );
+
         transaction.setGuardian(new Address(this._guardianAddress));
       }
 

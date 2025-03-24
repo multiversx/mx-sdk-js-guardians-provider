@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [[3.0.0](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/15)] - 2025-03-24
+- [Updated sdk-core to v.14](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/15)
+
 ## [[2.0.2](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/14)] - 2024-08-20
 - [Added battlenet network ID to guardian providers](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/13)
 

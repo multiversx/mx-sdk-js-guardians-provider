@@ -1,6 +1,6 @@
 {
   "name": "@multiversx/sdk-guardians-provider",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Co-Signing provider for MultiversX DApps",
   "main": "out/index.js",
   "types": "out/index.d.js",
@@ -22,11 +22,11 @@
     "@types/node": "17.0.23",
     "esmify": "2.1.1",
     "typescript": "5.0.3",
-    "@multiversx/sdk-core": ">= 12.18.0",
+    "@multiversx/sdk-core": ">= 14.0.1",
     "axios": "1.6.5"
   },
   "peerDependencies": {
-    "@multiversx/sdk-core": ">= 12.18.0",
+    "@multiversx/sdk-core": ">= 14.0.1",
     "axios": ">= 1.6.5"
   }
 }
