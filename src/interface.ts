@@ -1,7 +1,3 @@
-export interface ISignature {
-  hex(): string;
-}
-
 export interface IAPIAccountResponse {
   address: string;
   balance: string;
