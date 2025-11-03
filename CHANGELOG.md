@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [[3.1.0](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/18)] - 2025-11-03
+- [Migrated to sdk-core v15](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/17)
+
 ## [[3.0.1](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/16)] - 2025-04-28
 - [Removed esmify](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/16)
 
