@@ -56,12 +56,14 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         const transaction = transactionsArray[i];
         const plainCoSignedTransaction = rawCosignedTransactions[i];
 
-        transaction.guardianSignature = Buffer.from(
-          plainCoSignedTransaction.guardianSignature,
-          "hex"
+        transaction.guardianSignature = new Uint8Array(
+          Buffer.from(
+            plainCoSignedTransaction.guardianSignature,
+            "hex"
+          )
         );
 
-        transaction.setGuardian(new Address(this._guardianAddress));
+        transaction.guardian = new Address(this._guardianAddress);
       }
 
       return transactionsArray;
