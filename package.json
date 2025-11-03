@@ -21,11 +21,11 @@
   "devDependencies": {
     "@types/node": "17.0.23",
     "typescript": "5.0.3",
-    "@multiversx/sdk-core": ">= 14.0.1",
-    "axios": "1.6.5"
+    "@multiversx/sdk-core": "^15.x",
+    "axios": "1.7.4"
   },
   "peerDependencies": {
-    "@multiversx/sdk-core": ">= 14.0.1",
-    "axios": ">= 1.6.5"
+    "@multiversx/sdk-core": "^14.x || ^15.x",
+    "axios": ">= 1.7.4"
   }
 }
