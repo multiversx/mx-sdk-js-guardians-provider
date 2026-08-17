@@ -37,18 +37,18 @@ class GuardianProvidersResolver {
       serviceId: DEFAULT_SERVICE_ID,
       provider: TCSGuardianProvider,
       providerServiceNetworkUrls: {
-        testnet: "https://testnet-tcs-api.multiversx.com",
+        testnet: "https://testnet-tools.multiversx.com",
         devnet: "https://devnet-tools.multiversx.com",
-        'devnet-old': "https://devnet-old-tools.multiversx.com",
+        "devnet-old": "https://devnet-old-tools.multiversx.com",
         mainnet: "https://tools.multiversx.com",
-        battlenet: "https://tools.multiversx.com"
+        battlenet: "https://tools.multiversx.com",
       },
     },
   ];
 
   static getProviderByServiceId(serviceId: string): IProviderInfo | undefined {
     const result = this.providers.find(
-      (provider) => provider.serviceId === serviceId
+      (provider) => provider.serviceId === serviceId,
     );
     return result;
   }
