@@ -1,0 +1,3 @@
+allowBuilds:
+  keccak: false
+  protobufjs: false
