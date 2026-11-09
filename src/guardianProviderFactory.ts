@@ -66,7 +66,10 @@ class GuardianProviderFactory {
 
     const { provider: ResolvedProvider } = providerData;
     const provider = new ResolvedProvider();
-    const baseURL = providerData.providerServiceNetworkUrls[networkId];
+    const baseURL = GuardianProvidersResolver.getProviderServiceNetworkUrl(
+      providerData,
+      networkId
+    );
 
     if (!baseURL) {
       throw new Error(`Guardian service base network URL does not exist for ID ${networkId}`);
@@ -92,11 +95,14 @@ class GuardianProviderFactory {
       apiAddress,
       address,
       networkId,
-      providerServiceUrl: providerData.providerServiceNetworkUrls[networkId],
+      providerServiceUrl: baseURL,
       backoffWrongCode: data["backoff-wrong-code"],
       registrationDelay: data["registration-delay"],
       pendingProviderServiceUrl: pendingProviderData
-        ? pendingProviderData.providerServiceNetworkUrls[networkId]
+        ? GuardianProvidersResolver.getProviderServiceNetworkUrl(
+            pendingProviderData,
+            networkId
+          ) ?? ""
         : "",
     });
 
@@ -128,7 +134,7 @@ class GuardianProviderFactory {
       await this.fetcher.fetch({
         method: "get",
         baseURL: apiAddress,
-        url: `/accounts/${address}/?withGuardianInfo=true`,
+        url: `/accounts/${encodeURIComponent(address)}/?withGuardianInfo=true`,
       })
     ).data;
 
