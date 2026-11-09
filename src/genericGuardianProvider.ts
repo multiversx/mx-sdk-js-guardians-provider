@@ -114,7 +114,7 @@ class GenericGuardianProvider {
     } = await this.fetcher.fetch({
       method: "get",
       baseURL: this.apiAddress,
-      url: `/accounts/${this.address}/?withGuardianInfo=true`,
+      url: `/accounts/${encodeURIComponent(this.address)}/?withGuardianInfo=true`,
     });
 
     this.init({

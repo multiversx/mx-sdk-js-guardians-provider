@@ -31,6 +31,28 @@ interface IProviderInfo {
   providerServiceNetworkUrls: ServiceNetworkType;
 }
 
+const LOCAL_HOSTNAMES = ["localhost", "127.0.0.1", "[::1]"];
+
+function assertSecureServiceUrl(url: string): void {
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    throw new Error(`Invalid guardian service URL: "${url}".`);
+  }
+
+  const isHttps = parsedUrl.protocol === "https:";
+  const isLocalHttp =
+    parsedUrl.protocol === "http:" &&
+    LOCAL_HOSTNAMES.includes(parsedUrl.hostname);
+
+  if (!isHttps && !isLocalHttp) {
+    throw new Error(
+      `Guardian service URL must use https: "${url}". Plain http is only allowed for localhost.`,
+    );
+  }
+}
+
 class GuardianProvidersResolver {
   protected static providers: Array<IProviderInfo> = [
     {
@@ -54,7 +76,25 @@ class GuardianProvidersResolver {
   }
 
   /**
+   * Returns the service url for `networkId`, or `undefined` if none is configured.
+   * Only own keys are read, so ids like "constructor" or "__proto__" never
+   * resolve to inherited object properties.
+   */
+  static getProviderServiceNetworkUrl(
+    providerInfo: IProviderInfo,
+    networkId: string,
+  ): string | undefined {
+    const urls = providerInfo.providerServiceNetworkUrls;
+    if (!Object.prototype.hasOwnProperty.call(urls, networkId)) {
+      return undefined;
+    }
+    const url = urls[networkId];
+    return typeof url === "string" && url ? url : undefined;
+  }
+
+  /**
    * Extends or overrides the service networks url list based on network.
+   * The url must use `https:`
    */
   static extendProviderInfoNetworkUrls({
     serviceId,
@@ -63,6 +103,8 @@ class GuardianProvidersResolver {
     serviceId: IProviderInfo["serviceId"];
     network: IInjectableNetworkUrl;
   }) {
+    assertSecureServiceUrl(network.url);
+
     this.providers = this.providers.map((provider) => {
       if (provider.serviceId === serviceId) {
         provider.providerServiceNetworkUrls = {
