@@ -8,6 +8,9 @@ enum EndpointsEnum {
   VerifyCode = "/guardian/verify-code",
 }
 
+// An Ed25519 signature is 64 bytes, which is 128 hex characters.
+const GUARDIAN_SIGNATURE_HEX_REGEX = /^[0-9a-fA-F]{128}$/;
+
 class TCSGuardianProvider extends GenericGuardianProvider {
   override _codeInputLength = 6;
 
@@ -52,15 +55,35 @@ class TCSGuardianProvider extends GenericGuardianProvider {
         data,
       });
 
-      for (let i = 0; i < rawCosignedTransactions.length; i++) {
+      if (
+        !Array.isArray(rawCosignedTransactions) ||
+        rawCosignedTransactions.length !== transactionsArray.length
+      ) {
+        throw new Error(
+          "Guardian service returned an unexpected number of co-signed transactions.",
+        );
+      }
+
+      const guardianSignatures = rawCosignedTransactions.map(
+        (plainCoSignedTransaction: any) => {
+          const signature = plainCoSignedTransaction?.guardianSignature;
+          if (
+            typeof signature !== "string" ||
+            !GUARDIAN_SIGNATURE_HEX_REGEX.test(signature)
+          ) {
+            throw new Error(
+              "Guardian service returned an invalid guardian signature.",
+            );
+          }
+          return signature;
+        },
+      );
+
+      for (let i = 0; i < transactionsArray.length; i++) {
         const transaction = transactionsArray[i];
-        const plainCoSignedTransaction = rawCosignedTransactions[i];
 
         transaction.guardianSignature = new Uint8Array(
-          Buffer.from(
-            plainCoSignedTransaction.guardianSignature,
-            "hex"
-          )
+          Buffer.from(guardianSignatures[i], "hex"),
         );
 
         transaction.guardian = new Address(this._guardianAddress);
@@ -129,7 +152,6 @@ class TCSGuardianProvider extends GenericGuardianProvider {
       });
       return true;
     } catch (error: any) {
-      console.log(error);
       throw error;
     }
   }

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [[3.3.0](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull22)] - 2026-11-09
+
+- [Update build system, sdk-js-core v16, harden provider](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/21)
+
 ## [[3.2.0](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull20)] - 2026-08-17
 
 - [Update testnet api](https://github.com/multiversx/mx-sdk-js-guardians-provider/pull/19)
